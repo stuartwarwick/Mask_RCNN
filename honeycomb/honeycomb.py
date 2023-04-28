@@ -79,14 +79,14 @@ class HoneycombConfig(Config):
     NAME = "honeycomb"
 
     # Adjust depending on your GPU memory
-    IMAGES_PER_GPU = 6
+    IMAGES_PER_GPU = 1 # Originally 6
 
     # Number of classes (including background)
     # Empty_cells, capped_brood, larva, capped_honey
     NUM_CLASSES = 1 + 4  # Background + 4 
 
     # Number of training and validation steps per epoch
-    STEPS_PER_EPOCH = (657 - len(VAL_IMAGE_IDS)) // IMAGES_PER_GPU
+    STEPS_PER_EPOCH = (7) // IMAGES_PER_GPU
     VALIDATION_STEPS = max(1, len(VAL_IMAGE_IDS) // IMAGES_PER_GPU)
 
     # Don't exclude based on confidence. Since we have two classes
@@ -289,16 +289,16 @@ def train(model, dataset_dir, subset):
 
     # If starting from imagenet, train heads only for a bit
     # since they have random weights
-    print("Train network heads")
+    ic("Train network heads", Config.LEARNING_RATE)
     model.train(dataset_train, dataset_val,
-                learning_rate=config.LEARNING_RATE,
+                learning_rate=Config.LEARNING_RATE,
                 epochs=20,
                 augmentation=augmentation,
                 layers='heads')
 
-    print("Train all layers")
+    print("Train all layers", Config.LEARNING_RATE)
     model.train(dataset_train, dataset_val,
-                learning_rate=config.LEARNING_RATE,
+                learning_rate=Config.LEARNING_RATE,
                 epochs=40,
                 augmentation=augmentation,
                 layers='all')
